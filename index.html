@@ -62,6 +62,7 @@
                 current.textContent = res.current;
                 ambient.textContent = res.ambient;
                 currentHeight.textContent = res.height;
+                currentHeight.value = res.height;
             };
             HTTP.setRequestHeader('Content-Type', 'text/plain');
             HTTP.send(body);

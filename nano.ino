@@ -25,7 +25,7 @@ void setup()
     Serial.begin(115200);
     while (!Serial)
         ;
-    Serial.println("Ready");
+    // Serial.println("Ready");
     if (!mlx.begin())
     {
         Serial.println("E");
@@ -37,7 +37,9 @@ void setup()
 void getHeight()
 {
     currentHeight = distanceSensor.measureDistanceCm();
-    Serial.println("height" + String(currentHeight));
+    // currentHeight = currentHeight / 2.54;
+    // Serial.println("height" + String(currentHeight));
+    // Serial.println();
 }
 
 int getRevolutions(float distance)
@@ -72,7 +74,10 @@ void handleHeight(int heightRequest)
     // Serial.println("revs" + String(revolutions));
     stepper.rotate(revolutions);
     getHeight();
-    Serial.println("currentheight" + String(currentHeight));
+    // Serial.println("currentheight" + String(currentHeight));
+    Serial.print("H");
+    Serial.print(currentHeight);
+    Serial.println();
 }
 
 void loop()
@@ -83,9 +88,7 @@ void loop()
         incomingByte = Serial.peek();
         switch (incomingByte)
         {
-        case 'T':
-        {
-        }
+
         case 'H':
         {
             heightRequest = Serial.parseInt();
@@ -100,10 +103,12 @@ void loop()
         }
         }
     }
-    /*Serial.print("C"); Serial.print(mlx.readObjectTempF());
+    Serial.print("C");
+    Serial.print(mlx.readObjectTempF());
     Serial.println();
     delay(1000);
-    Serial.print("A"); Serial.print(mlx.readAmbientTempF());
+    Serial.print("A");
+    Serial.print(mlx.readAmbientTempF());
     Serial.println();
-    delay(1000);*/
+    delay(1000);
 }

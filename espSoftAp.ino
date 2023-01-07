@@ -19,7 +19,6 @@ int ambient;
 int current;
 int heightSetting = 50;
 int height;
-
 ESP8266WebServer server(80);
 
 // mlx.readAmbientTempF();
@@ -67,6 +66,7 @@ void handleRoot()
                                   "current.textContent = res.current;"
                                   "ambient.textContent = res.ambient;"
                                   "currentHeight.textContent = res.height;"
+                                  "heightSlider.value = res.height;"
                                   "};"
                                   "HTTP.setRequestHeader('Content-Type', 'text/plain');"
                                   "HTTP.send(body);"
@@ -76,7 +76,7 @@ void handleRoot()
                                   "</script></body></html>");
 }
 
-int getValue(int args)
+int getValue(int args) // get value from post request
 {
     String value;
     for (uint8_t i = 0; i < args; i++)
@@ -87,24 +87,27 @@ int getValue(int args)
     return value.toInt();
 }
 
-void handleHeight()
+void handleHeight() // handle height post request
 {
-    int value = getValue(server.args());
+    int value = getValue(server.args()); // get value from post request
     heightSetting = value;
-    Serial.println("H" + String(heightSetting));
+    Serial.println("H"); // send message to arduino
+    Serial.print(heightSetting);
     server.send(200, "text/plain");
 }
 
-void handleTemp()
+void handleTemp() // handle temp post request
 {
-    String message = "{\"ambient\":" + String(ambient) + ",\"current\":" + String(current) + ",\"height\":" + String(height) + "}";
+
+    String message = "{\"ambient\":" + String(ambient) + ",\"current\":" + String(current) + ",\"height\":" + String(height) + "}"; // make json object
     int value = getValue(server.args());
     tempSetting = value;
     server.send(200, "text/plain", message);
 }
-void handleUpdate()
+void handleUpdate() // sends current temp, ambient temp, and height
 {
-    String message = "{\"ambient\":" + String(ambient) + ",\"current\":" + String(current) + ",\"height\":" + String(height) + "}";
+
+    String message = "{\"ambient\":" + String(ambient) + ",\"current\":" + String(current) + ",\"height\":" + String(height) + "}"; // make json object
     server.send(200, "text/plain", message);
 }
 void setup()
@@ -113,7 +116,7 @@ void setup()
     Serial.begin(115200);
     Serial.println();
     Serial.print("Configuring access point...");
-    /* You can remove the password parameter if you want the AP to be open. */
+
     WiFi.softAP(ssid, password);
 
     IPAddress myIP = WiFi.softAPIP();
@@ -130,7 +133,8 @@ void setup()
 void loop()
 {
     server.handleClient();
-    if (Serial.available() > 0)
+
+    if (Serial.available() > 0) // check for messages from arduino nano
     {
         int incomingByte;
         incomingByte = Serial.peek();
