@@ -1,0 +1,46 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ESP Grill</title></head><body style="display:flex;flex-direction:column;align-items:center;background-color:gray"><h1 style="align-self:center;color:#fff">Chippewa Kitchen Controller</h1><div style="display:block;height:fit;width:80vw;background-color:#191970;color:#fff;padding:.5rem;border-radius:1em"><p style="padding:.5rem;font-size:xx-large">Ambient: <span id="ambient">0</span></p><p style="padding:.5rem;font-size:xx-large">Grill: <span id="current">0</span></p><div style="display:flex;flex-direction:column;margin-bottom:2em"><p style="padding:.5rem;font-size:xx-large">Target: <span id="target">300</span></p><input style="-webkit-appearance:none;background-color:orange;height:2rem;top:0;right:0;outline:0" id="tempSlider" name="temp" type="range" min="180" max="700" value="350"><p style="padding:.5rem;font-size:xx-large">Height: <span id="currentHeight">0</span></p><input type="range" name="height" id="height" style="-webkit-appearance:none;background-color:orange;height:2rem;top:0;right:0;outline:0" step="1" min="0" max="100" value="20"></div></div><script>const heightSlider = document.getElementById('height');
+        const ambient = document.getElementById('ambient');
+        const target = document.getElementById('target');
+        const current = document.getElementById('current');
+        const currentHeight = document.getElementById('currentHeight');
+        let intervalId;
+        function update(){
+           intervalId = setInterval((postRequest('','temp')), 2000);
+        }
+        heightSlider.oninput = function() {
+            clearInterval(intervalId);
+            currentHeight.innerHTML = this.value;
+            postRequest(this.value,'height')
+            update();
+        };
+        const tempSlider = document.getElementById('tempSlider');
+        const tempInput = document.getElementById('target');
+        tempSlider.oninput = function() {
+            if(this.value > 699){
+            target.setAttribute('style', 'color: red;');
+                target.innerHTML = 'MAX';
+                console.log(target.innerHTML)
+            }
+            else{ 
+                target.setAttribute('style', 'color: white;');
+                target.innerHTML = this.value;  
+            }
+            clearInterval(intervalId);
+            postRequest(this.value,'temp');
+            update();
+        };
+        const HTTP = new XMLHttpRequest();
+        const baseURL = 'http://192.168.4.1';
+        function postRequest(req,route){
+            HTTP.open('POST', `${baseURL}/${route}/`);
+            const body = JSON.stringify(req);
+            HTTP.onload = () => {
+                let res = JSON.parse(HTTP.responseText);
+                console.log(HTTP.responseText);
+                current.textContent = res.current;
+                ambient.textContent = res.ambient;
+                currentHeight.textContent = res.height;
+            };
+            HTTP.setRequestHeader('Content-Type', 'text/plain');
+            HTTP.send(body);
+        };</script></body></html>
