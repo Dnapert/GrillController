@@ -19,29 +19,8 @@ float currentHeight = 30; // current measured grill height
 float circumference = 12; // circumference of winch wheel
 int temp;                 // requested temp hold setting
 int revolutions;
-
-void setup()
-{
-    Serial.begin(115200);
-    while (!Serial)
-        ;
-    if (!mlx.begin())
-    {
-        Serial.println("E");
-    };
-    stepper.begin(RPM);
-    stepper.setSpeedProfile(stepper.LINEAR_SPEED, MOTOR_ACCEL, MOTOR_DECEL);
-    /* EEPROM.read(0);
-    if(EEPROM.read(0)!= 255){
-        minHeight = EEPROM.read(0);
-    }
-    EEPROM.read(1);
-    if(EEPROM.read(1)!= 255){
-        maxHeight = EEPROM.read(1);
-    } */
-    Serial.println(EEPROM.read(0));
-    Serial.println(EEPROM.read(1));
-}
+byte minHeightRegister = 0;
+byte maxHeightRegister = 1;
 
 void getHeight()
 {
@@ -88,17 +67,36 @@ void handleHeight(int heightRequest)
     Serial.print(currentHeight);
     Serial.println();
 }
+void setup()
+{
+    Serial.begin(115200);
+    while (!Serial)
+        ;
+    if (!mlx.begin())
+    {
+        Serial.println("E");
+    };
+    stepper.begin(RPM);
+    stepper.setSpeedProfile(stepper.LINEAR_SPEED, MOTOR_ACCEL, MOTOR_DECEL);
+    delay(500);
+    if (EEPROM.read(minHeightRegister) != 255)
+    {
+        minHeight = EEPROM.read(0);
+    }
+    if (EEPROM.read(maxHeightRegister) != 255)
+    {
+        maxHeight = EEPROM.read(1);
+    }
+    Serial.println('M');
+    Serial.print(EEPROM.read(maxHeightRegister));
+    Serial.println();
+    Serial.println('m');
+    Serial.print(EEPROM.read(minHeightRegister));
+}
 
 void loop()
 {
-    if (digitalRead(upButton) == HIGH)
-    {
-        stepper.move();
-        getHeight();
-        Serial.print("H");
-        Serial.print(currentHeight);
-        Serial.println();
-    }
+
     if (Serial.available() > 0)
     {
         int incomingByte;
@@ -111,6 +109,22 @@ void loop()
             heightRequest = Serial.parseInt();
             handleHeight(heightRequest);
             Serial.read();
+            break;
+        }
+        case 'M': // Max height identifier
+        {
+            maxHeight = Serial.parseInt();
+            EEPROM.write(maxHeightRegister, maxHeight);
+            Serial.read();
+            Serial.println(EEPROM.read(maxHeightRegister));
+            break;
+        }
+        case 'm': // min height identifier
+        {
+            minHeight = Serial.parseInt();
+            EEPROM.write(minHeightRegister, minHeight);
+            Serial.read();
+            Serial.println(EEPROM.read(minHeightRegister));
             break;
         }
         default:

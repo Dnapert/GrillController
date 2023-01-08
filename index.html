@@ -6,66 +6,76 @@
     <meta name='viewport' content='width=device-width, initial-scale=1.0'>
     <title>ESP Grill</title>
 </head>
+<style>
+    button{
+        width:120px;
+        height:60px;
+        border-radius:1rem;
+        font-size:large;
+        font-weight: bold;
+        margin-top:1rem;
+        background-color:rgb(236, 235, 224);
+        padding:10px;
+        border:solid;
+        cursor: pointer;
+    }
+    button:active{
+        background-color: rgb(41, 131, 41);
+    }
+   
+    p{
+        padding: .5rem;
+        font-size: xx-large;
+    }
+    .container{
+        display:block;
+        height:fit;
+        width:80vw;
+        background-color:midnightblue;
+        color:white;
+        padding:.5rem;
+        border-radius:1em;
+    }
+    h1{
+        padding: .5rem;
+        font-size: xx-large;
+    }
+    .controlContainer{
+        display: flex;
+        flex-direction: column;
+        margin-bottom:2em;
+    }
+    input{
+        -webkit-appearance: none;
+        background-color:orange;
+        height:2rem;
+        top: 0;
+        right: 0;
+        outline: none;
+    }
+    .buttonBox{
+        display:flex;
+        justify-content: center;
+    }
+</style>
 <body style=' display:flex; flex-direction: column; align-items: center;background-color: gray;'>
-    <h1 style='align-self: center;color:white;'>Chippewa Kitchen Controller</h1>
-    <div style='display:block;height:fit;width:80vw;;background-color:midnightblue; color:white;padding:.5rem;border-radius:1em;'>
-        <p style='padding: .5rem; font-size: xx-large;'>Ambient: <span id='ambient'> 0</span></p>
-        <p style='padding: .5rem; font-size: xx-large;'>Grill: <span id='current'> 0</span></p>
-        <div style=' display: flex;flex-direction: column;margin-bottom:2em;'>
-            <p style='padding: .5rem; font-size: xx-large;'> Target: <span id='target'>  300</p></span>
-            <input style='-webkit-appearance:none;background-color:orange; height:2rem;top: 0;right: 0;outline: none;' id='tempSlider' name='temp' type='range' min='180' max='700' value='350'>
+    <h1 >Chippewa Kitchen Controller</h1>
+    <div class="container">
+        <p >Ambient: <span id='ambient'> 0</span></p>
+        <p >Grill: <span id='current'> 0</span></p>
+        <div class="controlContainer" >
+            <p > Target: <span id='target'>  300</p></span>
+            <input  id='tempSlider' name='temp' type='range' min='180' max='700' value='350'>
             <p style='padding: .5rem; font-size: xx-large;'>Height: <span id='currentHeight'>20</span></p>
-            <input type='range' name='height' id='height'style='-webkit-appearance:none;background-color:orange; height:2rem;top: 0;right: 0;outline: none;margin-bottom:2rem' step='1' min='0' max='100' value='20'>
-            <button name="setHeight" style="width:100px;border-radius:1rem;padding:10px;border:none;">Set Height</button>
+            <input type='range' name='height' id='height' step='1' min='0' max='100' value='20'>
+            <div class="buttonBox">
+            <button id='button'name="setHeight" >Set Height</button>
+            </div>
 
         </div>
     </div>
     <script>
-        const HTTP = new XMLHttpRequest();
-        const baseURL = 'http://192.168.4.1';
-        const setHeight = document.querySelector('button[name="setHeight"]');
-        const heightSlider = document.getElementById('height');
-        const ambient = document.getElementById('ambient');
-        const target = document.getElementById('target');
-        const current = document.getElementById('current');
-        const currentHeight = document.getElementById('currentHeight');
-        heightSlider.oninput = function() {
-            currentHeight.innerHTML = this.value;
-        };
-        const tempSlider = document.getElementById('tempSlider');
-        const tempInput = document.getElementById('target');
-        tempSlider.oninput = function() {
-            if(this.value > 699){
-            target.setAttribute('style', 'color: red;');
-                target.innerHTML = 'MAX';
-            }
-            else{ 
-                target.setAttribute('style', 'color: white;');
-                target.innerHTML = this.value;  
-            }
-        };
-        setHeight.onclick = function(){
-            postRequest(heightSlider.value,'height');
-        };
-        function postRequest(req,route){
-            HTTP.open('POST', `${baseURL}/${route}/`);
-            const body = JSON.stringify(req);
-            HTTP.onload = () => {
-                let res = JSON.parse(HTTP.responseText);
-                current.textContent = res.current;
-                ambient.textContent = res.ambient;
-                currentHeight.textContent = res.height;
-                currentHeight.value = res.height;
-                heightSlider.setAttribute("min",res.min);
-                heightSlider.setAttribute("max",res.max);
-            };
-            HTTP.setRequestHeader('Content-Type', 'text/plain');
-            HTTP.send(body);
-        };
-        function update(){
-           postRequest('0','update');
-        }
-        setInterval(update, 2000);
+        
     </script>
 </body>
 </html>
