@@ -12,22 +12,20 @@
 BasicStepperDriver stepper(MOTOR_STEPS, DIR, STEP);
 UltraSonicDistanceSensor distanceSensor(6, 7);
 Adafruit_MLX90614 mlx = Adafruit_MLX90614();
-int minHeight = 12;       // mininum allowed grill height
-int maxHeight = 45;       // maximun allowed grill height
-int heightRequest;        // setting for requested height
-float currentHeight = 30; // current measured grill height
-float circumference = 12; // circumference of winch wheel
-int temp;                 // requested temp hold setting
-int revolutions;
-byte minHeightRegister = 0;
-byte maxHeightRegister = 1;
+int minHeight = 12;         // mininum allowed grill height
+int maxHeight = 45;         // maximun allowed grill height
+int heightRequest;          // setting for requested height
+float currentHeight = 30;   // current measured grill height
+float circumference = 12;   // circumference of winch wheel
+int temp;                   // requested temp hold setting
+int revolutions;            // holds revoluton variable
+byte minHeightRegister = 0; // eeprom register
+byte maxHeightRegister = 1; // eeprom register
 
 void getHeight()
 {
     currentHeight = distanceSensor.measureDistanceCm();
     currentHeight = currentHeight / 2.54; // convert to inches
-    // Serial.println("height" + String(currentHeight));
-    // Serial.println();
 }
 
 int getRevolutions(float distance)
@@ -38,9 +36,7 @@ int getRevolutions(float distance)
     // multiply by 360 degrees per rev
     float degreesToRotate;
     distance = (distance / circumference) * 30;
-    // Serial.println("distance" + String(distance));
     degreesToRotate = distance * 360;
-    // Serial.println("degrees to rotate" + String(degreesToRotate));
 
     return degreesToRotate;
 }
@@ -55,14 +51,11 @@ void handleHeight(int heightRequest)
     {
         heightRequest = maxHeight;
     }
-    // getHeight();
+    getHeight();
     int distanceToMove = heightRequest - currentHeight;
-    // Serial.println("distance to move" + String(distanceToMove));
     revolutions = getRevolutions(distanceToMove);
-    // Serial.println("revs" + String(revolutions));
     stepper.rotate(revolutions);
     getHeight();
-    // Serial.println("currentheight" + String(currentHeight));
     Serial.print("H");
     Serial.print(currentHeight);
     Serial.println();
