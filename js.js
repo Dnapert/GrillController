@@ -6,7 +6,6 @@ const setHeight = document.querySelector('button[name="setHeight"]');
         const currentHeight = document.getElementById('currentHeight');
         heightSlider.oninput = function() {
             currentHeight.innerHTML = this.value;
-            postRequest(this.value,'height')
         };
         const tempSlider = document.getElementById('tempSlider');
         const tempInput = document.getElementById('target');
