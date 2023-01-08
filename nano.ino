@@ -2,6 +2,7 @@
 #include <Adafruit_MLX90614.h>
 #include <HCSR04.h>
 #include "BasicStepperDriver.h"
+#include <EEPROM.h>
 #define MOTOR_STEPS 200
 #define RPM 500
 #define MOTOR_ACCEL 2000
@@ -11,11 +12,10 @@
 BasicStepperDriver stepper(MOTOR_STEPS, DIR, STEP);
 UltraSonicDistanceSensor distanceSensor(6, 7);
 Adafruit_MLX90614 mlx = Adafruit_MLX90614();
-
-int minHeight = 0;        // mininum allowed grill height
-int maxHeight = 100;      // maximun allowed grill height
+int minHeight = 12;       // mininum allowed grill height
+int maxHeight = 45;       // maximun allowed grill height
 int heightRequest;        // setting for requested height
-int currentHeight = 30;   // current measured grill height
+float currentHeight = 30; // current measured grill height
 float circumference = 12; // circumference of winch wheel
 int temp;                 // requested temp hold setting
 int revolutions;
@@ -25,19 +25,28 @@ void setup()
     Serial.begin(115200);
     while (!Serial)
         ;
-    // Serial.println("Ready");
     if (!mlx.begin())
     {
         Serial.println("E");
     };
     stepper.begin(RPM);
     stepper.setSpeedProfile(stepper.LINEAR_SPEED, MOTOR_ACCEL, MOTOR_DECEL);
+    /* EEPROM.read(0);
+    if(EEPROM.read(0)!= 255){
+        minHeight = EEPROM.read(0);
+    }
+    EEPROM.read(1);
+    if(EEPROM.read(1)!= 255){
+        maxHeight = EEPROM.read(1);
+    } */
+    Serial.println(EEPROM.read(0));
+    Serial.println(EEPROM.read(1));
 }
 
 void getHeight()
 {
     currentHeight = distanceSensor.measureDistanceCm();
-    // currentHeight = currentHeight / 2.54;
+    currentHeight = currentHeight / 2.54; // convert to inches
     // Serial.println("height" + String(currentHeight));
     // Serial.println();
 }
@@ -82,6 +91,14 @@ void handleHeight(int heightRequest)
 
 void loop()
 {
+    if (digitalRead(upButton) == HIGH)
+    {
+        stepper.move();
+        getHeight();
+        Serial.print("H");
+        Serial.print(currentHeight);
+        Serial.println();
+    }
     if (Serial.available() > 0)
     {
         int incomingByte;

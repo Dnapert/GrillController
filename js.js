@@ -1,27 +1,4 @@
-<!DOCTYPE html>
-<html lang='en'>
-<head>
-    <meta charset='UTF-8'>
-    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
-    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-    <title>ESP Grill</title>
-</head>
-<body style=' display:flex; flex-direction: column; align-items: center;background-color: gray;'>
-    <h1 style='align-self: center;color:white;'>Chippewa Kitchen Controller</h1>
-    <div style='display:block;height:fit;width:80vw;;background-color:midnightblue; color:white;padding:.5rem;border-radius:1em;'>
-        <p style='padding: .5rem; font-size: xx-large;'>Ambient: <span id='ambient'> 0</span></p>
-        <p style='padding: .5rem; font-size: xx-large;'>Grill: <span id='current'> 0</span></p>
-        <div style=' display: flex;flex-direction: column;margin-bottom:2em;'>
-            <p style='padding: .5rem; font-size: xx-large;'> Target: <span id='target'>  300</p></span>
-            <input style='-webkit-appearance:none;background-color:orange; height:2rem;top: 0;right: 0;outline: none;' id='tempSlider' name='temp' type='range' min='180' max='700' value='350'>
-            <p style='padding: .5rem; font-size: xx-large;'>Height: <span id='currentHeight'>20</span></p>
-            <input type='range' name='height' id='height'style='-webkit-appearance:none;background-color:orange; height:2rem;top: 0;right: 0;outline: none;margin-bottom:2rem' step='1' min='0' max='100' value='20'>
-            <button name="setHeight" style="width:100px;border-radius:1rem;padding:10px;border:none;">Set Height</button>
-
-        </div>
-    </div>
-    <script>
-        const setHeight = document.querySelector('button[name="setHeight"]');
+const setHeight = document.querySelector('button[name="setHeight"]');
         const heightSlider = document.getElementById('height');
         const ambient = document.getElementById('ambient');
         const target = document.getElementById('target');
@@ -73,7 +50,3 @@
            postRequest('0','update');
         }
         setInterval(update, 2000);
-        
-    </script>
-</body>
-</html>
