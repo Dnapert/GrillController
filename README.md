@@ -1,6 +1,6 @@
 # Grill Controller
 
-An ESP866 acting as a soft access point serving an HTML page to allow remote control of a grill over a fire pit
+An ESP866 acting as a soft access point serving an HTML page to allow remote control of a grill over a fire pit. An arduino nano receives serial data from the esp8266 to control the height of the grill via a stepper motor and a gearbox
 
   
 # Hardware
