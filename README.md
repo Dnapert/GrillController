@@ -24,3 +24,13 @@ An ESP866 acting as a soft access point serving an HTML page to allow remote con
 - Every 2 secondsd the nano will take a temperature reading from the MLX90614 and send it to the ESP8266
 - The client will send a post request to 'update' every two seconds
 - The ESP8266 will then send the current temperature to the client
+### Calibration feature
+  - The calibrate button on the HTML page opens the setminimum and set maximum buttons
+  - The user will use the height slider to move the grill to lowest or highest position
+  - The User will press the set minimum button or maximum button accordingly
+    - This sends a post request to the esp8266
+    - The esp8266 will send serial data to nano to trigger the set min or max function 
+    - The nano will take a distance measurment and set the eeprom as well as the global variables accordingly
+    - The nano will send the distance to the esp8266, which will send the data to the client
+    - the minimum or maximum of the height slider will be updated 
+ 
