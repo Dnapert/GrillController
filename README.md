@@ -33,4 +33,5 @@ An ESP866 acting as a soft access point serving an HTML page to allow remote con
     - The nano will take a distance measurment and set the eeprom as well as the global variables accordingly
     - The nano will send the distance to the esp8266, which will send the data to the client
     - the minimum or maximum of the height slider will be updated 
- 
+ ## Future Features
+  -Add PID control to maintain a set temperature of the grill by varying the height
