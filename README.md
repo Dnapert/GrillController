@@ -21,9 +21,10 @@ An ESP866 acting as a soft access point serving an HTML page to allow remote con
 - The nano will then take a height reading from the ultrasonic sensor
 - The nano will send the current height to the ESP8266
 - The ESP8266 will then send the current height to the client
-- Every 2 secondsd the nano will take a temperature reading from the MLX90614 and send it to the ESP8266
 - The client will send a post request to 'update' every two seconds
-- The ESP8266 will then send the current temperature to the client
+- The esp8266 will send a message to the nano
+- The nano will respond with the current temperature readings
+- The ESP8266 will then send the current temperature readings to the client
 ### Calibration feature
   - The calibrate button on the HTML page opens the setminimum and set maximum buttons
   - The user will use the height slider to move the grill to lowest or highest position
