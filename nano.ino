@@ -12,8 +12,8 @@
 BasicStepperDriver stepper(MOTOR_STEPS, DIR, STEP);
 UltraSonicDistanceSensor distanceSensor(6, 7);
 Adafruit_MLX90614 mlx = Adafruit_MLX90614();
-int minHeight = 12;         // mininum allowed grill height
-int maxHeight = 45;         // maximun allowed grill height
+float minHeight = 12;       // mininum allowed grill height
+float maxHeight = 45;       // maximun allowed grill height
 int heightRequest;          // setting for requested height
 float currentHeight = 30;   // current measured grill height
 float circumference = 12;   // circumference of winch wheel
@@ -106,20 +106,35 @@ void loop()
         }
         case 'M': // Max height identifier
         {
-            maxHeight = Serial.parseInt();
+            maxHeight = distanceSensor.measureDistanceCm() / 2.54;
             EEPROM.write(maxHeightRegister, maxHeight);
             Serial.read();
-            Serial.println(EEPROM.read(maxHeightRegister));
+            Serial.println('M');
+            Serial.print(EEPROM.read(maxHeightRegister));
+            Serial.println();
             break;
         }
         case 'm': // min height identifier
         {
-            minHeight = Serial.parseInt();
+            minHeight = distanceSensor.measureDistanceCm() / 2.54;
             EEPROM.write(minHeightRegister, minHeight);
             Serial.read();
-            Serial.println(EEPROM.read(minHeightRegister));
+            Serial.println('m');
+            Serial.print(EEPROM.read(minHeightRegister));
             break;
         }
+        case 'T':
+        {
+            Serial.println("G");
+            Serial.print(mlx.readObjectTempF());
+            Serial.println();
+            Serial.println("A");
+            Serial.print(mlx.readAmbientTempF());
+            Serial.println();
+            Serial.read();
+            break;
+        }
+
         default:
         {
             Serial.read();
@@ -127,12 +142,4 @@ void loop()
         }
         }
     }
-    Serial.print("C");
-    Serial.print(mlx.readObjectTempF());
-    Serial.println();
-    delay(1000);
-    Serial.print("A");
-    Serial.print(mlx.readAmbientTempF());
-    Serial.println();
-    delay(1000);
 }

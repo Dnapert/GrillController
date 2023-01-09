@@ -67,7 +67,7 @@ void handleTemp() // handle temp post request
 }
 void handleUpdate() // sends current temp, ambient temp, and height
 {
-
+    Serial.println('T');
     String message = "{\"ambient\":" + String(ambient) + ",\"current\":" + String(current) + ",\"height\":" + String(height) + "}"; // make json object
     server.send(200, "text/plain", message);
 }
@@ -131,6 +131,18 @@ void loop()
         {
             minHeight = Serial.parseInt();
             server.send(200, "text/plain", "{\"min\":" + String(minHeight) + "}");
+        }
+        case 'T':
+        {
+            ambient = Serial.parseInt();
+            Serial.read();
+            break;
+        }
+        case 'G':
+        {
+            current = Serial.parseInt();
+            Serial.read();
+            break;
         }
 
         default:
