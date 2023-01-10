@@ -2,7 +2,7 @@
 
 An ESP866 acting as a soft access point serving an HTML page to allow remote control of a grill over a fire pit. An arduino nano receives serial data from the esp8266 to control the height of the grill via a stepper motor and a gearbox
 
-  
+ ### if you want to contribute please branch
 # Hardware
 
 * ESP8266 Wemos D1 mini
